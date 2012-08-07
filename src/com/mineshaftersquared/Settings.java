@@ -7,49 +7,75 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import net.minecraft.Util;
+
 import mineshafter.util.Resources;
 
 public class Settings 
 {
 	public Properties properties  = new Properties();
+	private String fileName = "mineshaftersquared.properties";
+	private File workingDirectory;
 	
-	public Settings(File rootFolder)
+	public Settings()
 	{
-		String file = rootFolder + "/mineshaftersquared.properties";
+		this(new File("."));
+	}
+	
+	public Settings(File file)
+	{
+		Logger.logln("Loading settings...");
+		
+		workingDirectory = file;
 		
 		try {
-			Logger.logln(rootFolder + "/mineshaftersquared.properties");
-			properties.load(new FileInputStream(file));
+			
+			properties.load(new FileInputStream(fileName));
+			
 		} catch (IOException e) {
+			
 			Logger.logln("No properties file: creating with defaults");
-			purgeFiles(file);
-			createWithDefaults(file);
+			purgeFiles();
+			createWithDefaults();
 		}
 	}
 	
-	private void createWithDefaults(String filePath)
+	private void createWithDefaults()
 	{
-		try {
 			properties.setProperty("auth", Resources.loadString("auth").trim());
-			properties.store(new FileOutputStream(filePath), null);
-		} catch (FileNotFoundException e1) {
-			Logger.logln("Error creating properties file" + e1);
-		} catch (IOException e1) {
-			Logger.logln("Error creating properties file" + e1);
-		}
+			save();
 	}
 	
-	private void purgeFiles(String file)
+	private void purgeFiles()
 	{
-		File ms2 = new File(file + "/minecraft.jar");
-		File ms2_modified = new File(file + "/minecraft_modified.jar");
+		File ms2 = new File(workingDirectory + "/minecraft.jar");
+		File ms2_modified = new File(workingDirectory + "/minecraft_modified.jar");
 		
 		ms2.delete();
 		ms2_modified.delete();
 	}
 	
+	public void save()
+	{
+		try {
+			Logger.logln("SAVING");
+			properties.store(new FileOutputStream(workingDirectory + "/" + fileName), null);
+			
+		} catch (FileNotFoundException e1) {
+			Logger.logln("Error creating properties file" + e1);
+		} catch (IOException e1) {
+			Logger.logln("Error creating properties file" + e1);
+		}
+		
+	}
+	
 	public String get(String key)
 	{
 		return properties.getProperty(key);
+	}
+	
+	public void set(String key, String value)
+	{
+		properties.setProperty(key, value);
 	}
 }

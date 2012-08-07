@@ -1,6 +1,8 @@
 package mineshafter.programs;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import sun.applet.Main;
 import java.net.URLClassLoader;
@@ -8,6 +10,7 @@ import java.util.jar.JarFile;
 import java.lang.reflect.Method;
 import java.util.jar.Attributes;
 
+import com.mineshaftersquared.ConsoleStream;
 import com.mineshaftersquared.Logger;
 import com.mineshaftersquared.Settings;
 
@@ -23,10 +26,11 @@ public class MineServer {
 	protected static String gamePath;
 	protected static String versionPath;
 	protected static Settings settings;
+	protected static ConsoleStream consoleStream = new ConsoleStream();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		// Get Update Info
-		settings = new Settings(new File("."));
+		settings = new Settings();
 		authServer = settings.get("auth");
 		
 		// check for updates
@@ -36,6 +40,9 @@ public class MineServer {
 			System.exit(0);
 		}
 		
+		consoleStream.start();
+		
+		Logger.logln("Done Loading Stream");
 		launchProxyAndServer(args);
 	}
 	
@@ -105,5 +112,29 @@ public class MineServer {
 				return false;
 			else
 				return true;
+	}
+	
+	public static ConsoleStream getConsoleStream()
+	{
+		return consoleStream;
+	}
+	
+	public static void startConsoleStream()
+	{
+		consoleStream.start();
+	}
+	
+	public static String getId()
+	{
+		String serverId = settings.get("server");
+		
+		if(serverId == null)
+		{
+			serverId = "0";
+			settings.set("server", serverId);
+			settings.save();
+		}
+		
+		return serverId;
 	}
 }
