@@ -229,6 +229,7 @@ public class MineProxyHandler extends Thread {
 				if(method.equals("CONNECT")) {
 					int port = u.getPort();
 					if(port == -1) port = 80;
+					@SuppressWarnings("resource")
 					Socket sock = new Socket(u.getHost(), port);
 					
 					Streams.pipeStreamsActive(sock.getInputStream(), toClient);

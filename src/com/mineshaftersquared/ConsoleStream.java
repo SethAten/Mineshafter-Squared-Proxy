@@ -12,103 +12,148 @@ import mineshafter.proxy.MineProxyHandler;
 
 public class ConsoleStream extends Thread {
 	// tbd
-	private String url = "http://alpha.mineshaftersquared.com/process/sendLog";
-	private String version = "0.0.10";
+	private String url = "http://dev.mineshaftersquared.com/process/sendLog";
+	private String logFile = "server.log";
+	private String version = "0.0.11";
 	
 	private BufferedReader reader;
-	private String line = null;
-	private String buffer = null;
 	private boolean enabled = true;
-	private int sleepTime = 5000;
-	private boolean online = false; // this is the reason
+	private int sleepTime = 60000;
+	private boolean online = false;
 	
 	public ConsoleStream()
 	{
-		Logger.logln("Console Stream Version " + version);
+		Logger.logln("Console Stream Version " + version, true);
 		
-		try {
-			reader = new BufferedReader(new FileReader("server.log"));
-			while((line = reader.readLine()) != null);
+		try 
+		{
+			// get file
+			reader = new BufferedReader(new FileReader(logFile));
 			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			// get to end
+			while(reader.readLine() != null);
+		} 
+		catch (FileNotFoundException ex) 
+		{
+			Logger.logln(ex.toString());
+		} 
+		catch (IOException ex) 
+		{
+			Logger.logln(ex.toString());
 		}
-		
-		buffer = new String();
 	}
 	
-	public void run() {
-		try{
-			// enter loop
-	        while(enabled) 
-	        {
-				line = reader.readLine();
+	public void run() 
+	{
+        while(enabled) 
+        {	
+        	String content = new String();
+        	String serverId = MineServer.getId();
+        	
+			if(online)
+			{
+				// gather data
+				String log = readConsoleLog();
+				String hardware = getHardwareLoad().toString();
 				
-	        	if(line == null)
-	        	{
-	        		if(!buffer.isEmpty() && buffer != null)
-	        		{
-	        			// create request
-	        			String serverId = MineServer.getId();
-	        			String hardware = getHardwareLoad().toString();
-	        			
-		        		String content = "content=" + buffer + 
-		        						 "&server=" + serverId + 
-		        						 "&hardware=" + hardware;
-		        		
-		        		// send request
-		        		Logger.logln("Sending...");
-						String response = getData(MineProxyHandler.postRequest(url, content, "application/x-www-form-urlencoded"));
-						Logger.logln("Response: " + response);
-						buffer = new String(); // clear buffer
-						
-						// deal with response
-						JSONObject json = new JSONObject(response);
-						
-						// only change what is available (cuts down on bandwidth)
-						if(json.has("enabled"))
-							enabled = Boolean.parseBoolean(json.getString("enabled"));
-						if(json.has("sleepTime"))
-							sleepTime = Integer.parseInt(json.getString("sleepTime"));
-						if(json.has("url"))
-							url = json.getString("url");
-	        		}
-	        		
-					Thread.sleep(sleepTime); 
-	        	}
-	        	else if(online)
-	        	{
-	        		// gather
-	        		buffer += line + "\n";	      
-	        	}
-	        }
-	        
-	        // cleanup
-	        reader.close();
-	        
-		} catch(IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+				// build post data
+				content = "content=" + log + "&server=" + serverId + "&hardware=" + hardware;
+			}
+			else
+			{
+				// build post data
+				content = "server=" + serverId;
+			}
+			
+			// send Request and Process
+			processResponse(sendRequest(content));
+			
+			sleep();
+        }
+        
+        destruct();
     }
 	
-	private JSONObject getHardwareLoad() throws JSONException
+	private void processResponse(JSONObject json)
+	{
+		try
+		{
+			// only change what is available (cuts down on bandwidth)
+			if(json.has("enabled"))
+			{
+				enabled = Boolean.parseBoolean(json.getString("enabled"));
+			}
+			if(json.has("sleepTime"))
+			{
+				sleepTime = Integer.parseInt(json.getString("sleepTime"));
+			}
+			if(json.has("url"))
+			{
+				url = json.getString("url");
+			}
+			if(json.has("online"))
+			{
+				boolean newStatus = Boolean.parseBoolean(json.getString("online"));
+				
+				if(newStatus != online)
+				{
+					if(newStatus)
+					{
+						Logger.logln("Console Online");
+					}
+					else
+					{
+						Logger.logln("Console Offline");
+					}
+				}
+				
+				online = newStatus;
+			}
+		}
+		catch(JSONException ex)
+		{
+			Logger.logln(ex.toString());
+		}
+	}
+	
+	private String readConsoleLog()
+	{
+		String line = new String();
+		String buffer = new String();
+		
+		try 
+		{
+			while((line = reader.readLine()) != null)
+			{
+				buffer += line + "\n";
+			}
+		}
+		catch(IOException ex)
+		{
+			Logger.logln(ex.toString());
+		}
+		
+		return buffer;
+	}
+	
+	private JSONObject getHardwareLoad()
 	{
 		Runtime rt = Runtime.getRuntime();
 		JSONObject hardware = new JSONObject();
 		JSONObject memory = new JSONObject();
 		
 		// memory
-		memory.put("free", rt.freeMemory());
-		memory.put("total", rt.totalMemory());
-		memory.put("max", rt.maxMemory());
-		
-		hardware.put("memory", memory);
+		try
+		{
+			memory.put("free", rt.freeMemory());
+			memory.put("total", rt.totalMemory());
+			memory.put("max", rt.maxMemory());
+			hardware.put("memory", memory);
+		}
+		catch(JSONException ex)
+		{
+			Logger.logln(ex.toString());
+		}
 		
 		return hardware;
 	}
@@ -124,4 +169,41 @@ public class ConsoleStream extends Thread {
 		return response;
 	}
 	
+	private JSONObject sendRequest(String content)
+	{
+		String response = getData(MineProxyHandler.postRequest(url, content, "application/x-www-form-urlencoded"));
+		
+		try 
+		{
+			return new JSONObject(response);
+		} 
+		catch (JSONException e) 
+		{
+			return new JSONObject();
+		}
+	}
+	
+	private void sleep()
+	{
+		try 
+		{
+			Thread.sleep(sleepTime);
+		} 
+		catch (InterruptedException ex) 
+		{
+			Logger.logln(ex.toString());
+		} 
+	}
+	
+	private void destruct()
+	{
+		try 
+        {
+			reader.close();
+		} 
+        catch (IOException ex) 
+        {
+			Logger.logln(ex.toString());
+		}
+	}
 }

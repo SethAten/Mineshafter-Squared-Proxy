@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import net.minecraft.Util;
-
 import mineshafter.util.Resources;
 
 public class Settings 
@@ -57,13 +55,16 @@ public class Settings
 	
 	public void save()
 	{
-		try {
-			Logger.logln("SAVING");
-			properties.store(new FileOutputStream(workingDirectory + "/" + fileName), null);
-			
-		} catch (FileNotFoundException e1) {
+		try 
+		{
+			properties.store(new FileOutputStream(workingDirectory + "/" + fileName), null);	
+		} 
+		catch (FileNotFoundException e1)
+		{
 			Logger.logln("Error creating properties file" + e1);
-		} catch (IOException e1) {
+		} 
+		catch (IOException e1) 
+		{
 			Logger.logln("Error creating properties file" + e1);
 		}
 		

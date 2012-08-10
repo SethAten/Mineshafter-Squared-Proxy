@@ -36,13 +36,12 @@ public class MineServer {
 		// check for updates
 		if(MS2Update())
 		{
-			Logger.logln("An update for Mineshafter Squared is available, please go to " + authServer + " and redownload the proxy client.");
+			Logger.logln("An update for Mineshafter Squared is available, please go to " + authServer + " and redownload the proxy client.", true);
 			System.exit(0);
 		}
 		
-		consoleStream.start();
+		startConsoleStream();
 		
-		Logger.logln("Done Loading Stream");
 		launchProxyAndServer(args);
 	}
 	
@@ -66,6 +65,7 @@ public class MineServer {
 				load = "minecraft_server.jar";
 			}
 
+			@SuppressWarnings("resource")
 			Attributes attributes = new JarFile(load).getManifest().getMainAttributes();
 			String name = attributes.getValue("Main-Class");
 			
