@@ -30,7 +30,9 @@ public class Logger {
 		writeToFile(printOut);
 		
 		if(toScreen)
+		{
 			System.out.print(printOut);
+		}
 	}
 	
 	private static void writeToFile(String output)
@@ -40,7 +42,7 @@ public class Logger {
 			FileWriter fstream = new FileWriter(logFile);
 			BufferedWriter out = new BufferedWriter(fstream);
 			
-			out.write(output);
+			out.append(output);
 			
 			out.close();
 			fstream.close();

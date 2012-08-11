@@ -12,9 +12,9 @@ import mineshafter.proxy.MineProxyHandler;
 
 public class ConsoleStream extends Thread {
 	// tbd
-	private String url = "http://dev.mineshaftersquared.com/process/sendLog";
+	private String url = "http://alpha.mineshaftersquared.com/process/sendLog";
 	private String logFile = "server.log";
-	private String version = "0.0.11";
+	private String version = "0.0.12";
 	
 	private BufferedReader reader;
 	private boolean enabled = true;
@@ -55,7 +55,7 @@ public class ConsoleStream extends Thread {
 				// gather data
 				String log = readConsoleLog();
 				String hardware = getHardwareLoad().toString();
-				
+				Logger.log(log);
 				// build post data
 				content = "content=" + log + "&server=" + serverId + "&hardware=" + hardware;
 			}
