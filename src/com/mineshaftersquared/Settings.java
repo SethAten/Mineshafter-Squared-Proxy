@@ -21,17 +21,15 @@ public class Settings
 	}
 	
 	public Settings(File file)
-	{
-		Logger.logln("Loading settings...");
-		
-		workingDirectory = file;
-		
-		try {
-			
-			properties.load(new FileInputStream(fileName));
-			
-		} catch (IOException e) {
-			
+	{	
+		try 
+		{
+			workingDirectory = file;
+			File propertiesFile = new File(workingDirectory + "/" + fileName);
+			properties.load(new FileInputStream(propertiesFile));
+		} 
+		catch (IOException e) 
+		{
 			Logger.logln("No properties file: creating with defaults");
 			purgeFiles();
 			createWithDefaults();

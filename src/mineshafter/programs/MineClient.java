@@ -44,7 +44,8 @@ public class MineClient extends Applet {
 	protected static String versionPath;
 	protected static Settings settings;
 	
-	public void init() {
+	public void init() 
+	{
 		MineClient.main(new String[0]);
 	}
 	
@@ -52,13 +53,17 @@ public class MineClient extends Applet {
 	{
 		// Get Update Info
 		File gamePath = Util.getWorkingDirectory(); // test
+		
 		mineshaftersquaredPath = new File(gamePath.toString().replace("minecraft", "mineshaftersquared"));
+		System.out.println(mineshaftersquaredPath);
 		
 		if(!mineshaftersquaredPath.exists())
 			mineshaftersquaredPath.mkdir();
 		
 		settings = new Settings(mineshaftersquaredPath);
 		authServer = settings.get("auth");
+		
+		System.out.println("Using auth server: " + authServer);
 		
 		// check for MS2 updates
 		if(MS2Update())
