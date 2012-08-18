@@ -14,8 +14,9 @@ public class ConsoleStream extends Thread {
 	// tbd
 	private String url = "http://alpha.mineshaftersquared.com/process/sendLog";
 	private String logFile = "server.log";
-	private String version = "0.0.12";
+	private String version = "0.1.0";
 	
+	private MS2Logger logger = new MS2Logger();
 	private BufferedReader reader;
 	private boolean enabled = true;
 	private int sleepTime = 60000;
@@ -23,23 +24,22 @@ public class ConsoleStream extends Thread {
 	
 	public ConsoleStream()
 	{
-		Logger.logln("Console Stream Version " + version, true);
+		logger.info("Console Stream Version: " + version);
 		
-		try 
+		try
 		{
 			// get file
 			reader = new BufferedReader(new FileReader(logFile));
-			
 			// get to end
 			while(reader.readLine() != null);
 		} 
 		catch (FileNotFoundException ex) 
 		{
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		} 
 		catch (IOException ex) 
 		{
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		}
 	}
 	
@@ -55,7 +55,6 @@ public class ConsoleStream extends Thread {
 				// gather data
 				String log = readConsoleLog();
 				String hardware = getHardwareLoad().toString();
-				Logger.log(log);
 				// build post data
 				content = "content=" + log + "&server=" + serverId + "&hardware=" + hardware;
 			}
@@ -83,14 +82,17 @@ public class ConsoleStream extends Thread {
 			{
 				enabled = Boolean.parseBoolean(json.getString("enabled"));
 			}
+			
 			if(json.has("sleepTime"))
 			{
 				sleepTime = Integer.parseInt(json.getString("sleepTime"));
 			}
+			
 			if(json.has("url"))
 			{
 				url = json.getString("url");
 			}
+			
 			if(json.has("online"))
 			{
 				boolean newStatus = Boolean.parseBoolean(json.getString("online"));
@@ -98,13 +100,9 @@ public class ConsoleStream extends Thread {
 				if(newStatus != online)
 				{
 					if(newStatus)
-					{
-						Logger.logln("Console Online");
-					}
+						logger.info("Console Online");
 					else
-					{
-						Logger.logln("Console Offline");
-					}
+						logger.info("Console Offline");
 				}
 				
 				online = newStatus;
@@ -112,7 +110,7 @@ public class ConsoleStream extends Thread {
 		}
 		catch(JSONException ex)
 		{
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		}
 	}
 	
@@ -130,7 +128,7 @@ public class ConsoleStream extends Thread {
 		}
 		catch(IOException ex)
 		{
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		}
 		
 		return buffer;
@@ -152,7 +150,7 @@ public class ConsoleStream extends Thread {
 		}
 		catch(JSONException ex)
 		{
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		}
 		
 		return hardware;
@@ -191,7 +189,7 @@ public class ConsoleStream extends Thread {
 		} 
 		catch (InterruptedException ex) 
 		{
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		} 
 	}
 	
@@ -203,7 +201,7 @@ public class ConsoleStream extends Thread {
 		} 
         catch (IOException ex) 
         {
-			Logger.logln(ex.toString());
+			logger.severe(ex.toString());
 		}
 	}
 }

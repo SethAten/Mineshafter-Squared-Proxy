@@ -9,9 +9,8 @@ import java.net.URLClassLoader;
 import java.util.jar.JarFile;
 import java.lang.reflect.Method;
 import java.util.jar.Attributes;
-
 import com.mineshaftersquared.ConsoleStream;
-import com.mineshaftersquared.Logger;
+import com.mineshaftersquared.MS2Logger;
 import com.mineshaftersquared.Settings;
 
 import mineshafter.proxy.MineProxy;
@@ -26,17 +25,20 @@ public class MineServer {
 	protected static String gamePath;
 	protected static String versionPath;
 	protected static Settings settings;
+	protected static MS2Logger logger = new MS2Logger();
 	protected static ConsoleStream consoleStream = new ConsoleStream();
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
-		// Get Update Info
+		Settings.setProgramType(Settings.Mode.SERVER);
 		settings = new Settings();
+		
+		// Get Update Info
 		authServer = settings.get("auth");
 		
 		// check for updates
 		if(MS2Update())
 		{
-			Logger.logln("An update for Mineshafter Squared is available, please go to " + authServer + " and redownload the proxy client.", true);
+			logger.info("An update for Mineshafter Squared is available, please go to " + authServer + " and redownload the proxy client.");
 			System.exit(0);
 		}
 		
@@ -91,8 +93,10 @@ public class MineServer {
 			}
 			
 			main.invoke(cls, new Object[] { nargs });
-		} catch (Exception e) {
-			Logger.logln("Something bad happened:");
+		} 
+		catch (Exception e) 
+		{
+			logger.severe("Something bad happened: " + e.getMessage());
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -104,8 +108,8 @@ public class MineServer {
 			String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/server/new"));
 			
 			// Print Proxy Version Numbers to Console
-			Logger.logln("Current proxy version: " + VERSION);
-			Logger.logln("Gotten proxy version: " + updateInfo);
+			logger.info("Current proxy version: " + VERSION);
+			logger.info("Gotten proxy version: " + updateInfo);
 			
 			// tell user to update if not at latest version
 			if(updateInfo.equals(VERSION))

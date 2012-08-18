@@ -17,9 +17,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.JOptionPane;
 
-import net.minecraft.Util;
-
-import com.mineshaftersquared.Logger;
+import com.mineshaftersquared.MS2Logger;
 import com.mineshaftersquared.Settings;
 
 import mineshafter.proxy.MineProxy;
@@ -42,28 +40,19 @@ public class MineClient extends Applet {
 	protected static File mineshaftersquaredPath;
 	protected static String gamePath;
 	protected static String versionPath;
-	protected static Settings settings;
-	
-	public void init() 
-	{
-		MineClient.main(new String[0]);
-	}
+	protected static Settings settings = new Settings();
+	protected static MS2Logger logger;
 	
 	public static void main(String[] args) 
 	{
-		// Get Update Info
-		File gamePath = Util.getWorkingDirectory(); // test
+		mineshaftersquaredPath = settings.getWorkingDirectory();
 		
-		mineshaftersquaredPath = new File(gamePath.toString().replace("minecraft", "mineshaftersquared"));
-		System.out.println(mineshaftersquaredPath);
+		// create logger
+		logger = new MS2Logger(mineshaftersquaredPath);
 		
-		if(!mineshaftersquaredPath.exists())
-			mineshaftersquaredPath.mkdir();
-		
-		settings = new Settings(mineshaftersquaredPath);
+		// get auth server
 		authServer = settings.get("auth");
-		
-		System.out.println("Using auth server: " + authServer);
+		logger.config("Auth Server: " + authServer);
 		
 		// check for MS2 updates
 		if(MS2Update())
@@ -83,8 +72,8 @@ public class MineClient extends Applet {
 			String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
 			
 			// Print Proxy Version Numbers to Console
-			System.out.println("Current proxy version: " + VERSION);
-			System.out.println("Gotten proxy version: " + updateInfo);
+			logger.info("Current proxy version: " + VERSION);
+			logger.info("Gotten proxy version: " + updateInfo);
 			
 			// tell user to update if not at latest version
 			if(updateInfo.equals(VERSION))
@@ -114,8 +103,10 @@ public class MineClient extends Applet {
 			}
 			// everything's peachy
 			return true;
-		} catch(Exception e) {
-			Logger.logln("Something bad happened:" + e);
+		} 
+		catch(Exception e) 
+		{
+			logger.severe("Something bad happened:" + e);
 			System.exit(1);
 			// oops
 			return false;

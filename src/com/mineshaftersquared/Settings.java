@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import net.minecraft.Util;
 import mineshafter.util.Resources;
 
 public class Settings 
@@ -14,23 +15,24 @@ public class Settings
 	public Properties properties  = new Properties();
 	private String fileName = "mineshaftersquared.properties";
 	private File workingDirectory;
+	private MS2Logger logger;
+	public static enum Mode { CLIENT, SERVER };
+	private static Mode programType;
 	
 	public Settings()
-	{
-		this(new File("."));
-	}
-	
-	public Settings(File file)
 	{	
+		File file = getMS2Directory();
+		
 		try 
 		{
 			workingDirectory = file;
 			File propertiesFile = new File(workingDirectory + "/" + fileName);
+			logger = new MS2Logger(workingDirectory);
 			properties.load(new FileInputStream(propertiesFile));
 		} 
 		catch (IOException e) 
 		{
-			Logger.logln("No properties file: creating with defaults");
+			logger.info("No properties file: creating with defaults");
 			purgeFiles();
 			createWithDefaults();
 		}
@@ -57,15 +59,14 @@ public class Settings
 		{
 			properties.store(new FileOutputStream(workingDirectory + "/" + fileName), null);	
 		} 
-		catch (FileNotFoundException e1)
+		catch (FileNotFoundException e)
 		{
-			Logger.logln("Error creating properties file" + e1);
+			logger.severe("Error creating properties file" + e.getMessage());
 		} 
-		catch (IOException e1) 
+		catch (IOException e) 
 		{
-			Logger.logln("Error creating properties file" + e1);
+			logger.severe("Error creating properties file" + e.getMessage());
 		}
-		
 	}
 	
 	public String get(String key)
@@ -76,5 +77,40 @@ public class Settings
 	public void set(String key, String value)
 	{
 		properties.setProperty(key, value);
+	}
+	
+	private File getMS2Directory()
+	{
+		File workingDir;
+		switch(programType)
+		{
+			case SERVER:
+				workingDir = new File(".");
+				break;
+				
+			default:
+			case CLIENT:
+				// get working directory
+				File gamePath = Util.getWorkingDirectory(); // test
+				workingDir = new File(gamePath.toString().replace("minecraft", "mineshaftersquared"));
+				
+				// ensure working directory exists
+				if(!workingDir.exists())
+					workingDir.mkdir();
+				break;
+		}
+		
+		
+		return workingDir;
+	}
+	
+	public File getWorkingDirectory()
+	{
+		return workingDirectory;
+	}
+	
+	public static void setProgramType(Mode mode)
+	{
+		programType = mode;
 	}
 }
