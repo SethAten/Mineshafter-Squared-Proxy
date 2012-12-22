@@ -49,11 +49,11 @@ public class MineProxyHandler extends Thread {
 	 	
 		// Read the incoming headers
 		// System.out.println("Headers:");
-
+	 	
 	 	String header;
 		do {
 			header = readUntil(fromClient, '\n').trim();
-			// System.out.println("H: " + header + ", " + header.length());
+			System.out.println("H: " + header + ", " + header.length());
 			int splitPoint = header.indexOf(':');
 			if (splitPoint != -1) {
 				headers.put(header.substring(0, splitPoint).toLowerCase()
