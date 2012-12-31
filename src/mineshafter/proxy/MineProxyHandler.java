@@ -53,7 +53,7 @@ public class MineProxyHandler extends Thread {
 	 	String header;
 		do {
 			header = readUntil(fromClient, '\n').trim();
-			System.out.println("H: " + header + ", " + header.length());
+			
 			int splitPoint = header.indexOf(':');
 			if (splitPoint != -1) {
 				headers.put(header.substring(0, splitPoint).toLowerCase()
@@ -234,6 +234,9 @@ public class MineProxyHandler extends Thread {
 					Streams.pipeStreamsActive(sock.getInputStream(), toClient);
 					Streams.pipeStreamsActive(connection.getInputStream(), sock.getOutputStream());
 					// TODO Maybe put POST here instead, less to do, but would it work?
+					
+					// to avoid a resource leak
+					sock.close();
 					
 				} else if(method.equals("GET")  || method.equals("POST")) {
 					HttpURLConnection c = (HttpURLConnection) u.openConnection(Proxy.NO_PROXY);

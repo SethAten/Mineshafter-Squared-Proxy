@@ -59,16 +59,20 @@ public class MineServer {
 				load = "minecraft_server.jar";
 			}
 
-			Attributes attributes = new JarFile(load).getManifest().getMainAttributes();
-			String name = attributes.getValue("Main-Class");
+			JarFile jar 			= new JarFile(load);
+			Attributes attributes 	= jar.getManifest().getMainAttributes();
+			String name 			= attributes.getValue("Main-Class");
 			
-			URLClassLoader cl = null;
-			Class<?> cls = null;
-			Method main = null;
+			// close the jar to avoid a resource leak
+			jar.close();
+			
+			URLClassLoader cl 	= null;
+			Class<?> cls 		= null;
+			Method main 		= null;
 			try {
-				cl = new URLClassLoader(new URL[] { new File(load).toURI().toURL() }, Main.class.getClassLoader());
-				cls = cl.loadClass(name);
-				main = cls.getDeclaredMethod("main", new Class[] { String[].class });
+				cl 		= new URLClassLoader(new URL[] { new File(load).toURI().toURL() }, Main.class.getClassLoader());
+				cls 	= cl.loadClass(name);
+				main 	= cls.getDeclaredMethod("main", new Class[] { String[].class });
 			} catch (Exception e) {
 				System.out.println("Error loading class " + name + " from jar " + load + ":");
 				e.printStackTrace();

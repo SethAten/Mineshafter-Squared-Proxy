@@ -45,6 +45,7 @@ public class MineProxy extends Thread {
 		}
 	}
 	
+	@SuppressWarnings("resource")
 	public void run() {
 		try {
 			ServerSocket server = null;

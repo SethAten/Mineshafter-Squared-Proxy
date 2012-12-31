@@ -11,15 +11,19 @@ import mineshafter.util.Resources;
 
 public class Settings 
 {
-	public Properties properties  = new Properties();
+	private Properties properties  = new Properties();
 	
 	public Settings(File rootFolder)
 	{
-		String file = rootFolder + "/mineshaftersquared.properties";
+		String file = rootFolder + "/" + "mineshaftersquared.properties";
 		
 		try {
-			Logger.logln(rootFolder + "/mineshaftersquared.properties");
+			Logger.logln(file);
 			properties.load(new FileInputStream(file));
+			
+			if(new File(rootFolder + "minecraft.jar").exists())
+				purgeFiles(rootFolder.toString());
+			
 		} catch (IOException e) {
 			Logger.logln("No properties file: creating with defaults");
 			purgeFiles(file);
@@ -41,8 +45,8 @@ public class Settings
 	
 	private void purgeFiles(String file)
 	{
-		File ms2 = new File(file + "/minecraft.jar");
-		File ms2_modified = new File(file + "/minecraft_modified.jar");
+		File ms2 = new File(file + "minecraft.jar");
+		File ms2_modified = new File(file + "minecraft_modified.jar");
 		
 		ms2.delete();
 		ms2_modified.delete();

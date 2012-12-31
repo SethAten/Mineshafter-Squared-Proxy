@@ -92,8 +92,8 @@ public class MineClient extends Applet {
 	{
 		try {
 			// set minecraft downloads to Mineshafter Squared dir
-			MineClient.normalLauncherFilename = mineshaftersquaredPath + MineClient.normalLauncherFilename;
-			MineClient.hackedLauncherFilename = mineshaftersquaredPath + MineClient.hackedLauncherFilename;
+			MineClient.normalLauncherFilename = mineshaftersquaredPath + "/" + MineClient.normalLauncherFilename;
+			MineClient.hackedLauncherFilename = mineshaftersquaredPath + "/" + MineClient.hackedLauncherFilename;
 						
 			MineProxy proxy = new MineProxy(VERSION, authServer); // create proxy
 			proxy.start(); // launch proxy
@@ -122,6 +122,7 @@ public class MineClient extends Applet {
 			// if hacked game exists
 			if(new File(hackedLauncherFilename).exists()) {
 				URL u = new File(hackedLauncherFilename).toURI().toURL();
+				@SuppressWarnings("resource")
 				URLClassLoader cl = new URLClassLoader(new URL[]{u}, Main.class.getClassLoader());
 				
 				@SuppressWarnings("unchecked")
