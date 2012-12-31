@@ -30,7 +30,7 @@ import mineshafter.util.Streams;
 @SuppressWarnings("restriction")
 public class MineClient extends Applet {
 	private static final long serialVersionUID = 1L;
-	protected static String VERSION = "3.8.0";
+	protected static String VERSION = "3.8.1";
 	
 	protected static String launcherDownloadURL = "https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft.jar";
 	protected static String normalLauncherFilename = "minecraft.jar";
@@ -101,6 +101,7 @@ public class MineClient extends Applet {
 			
 			System.setProperty("http.proxyHost", "127.0.0.1");
 			System.setProperty("http.proxyPort", Integer.toString(proxyPort));
+			System.setProperty("java.net.preferIPv4Stack", "true");
 			
 			// Make sure we have a fresh launcher every time
 			File hackedFile = new File(hackedLauncherFilename);
@@ -175,7 +176,12 @@ public class MineClient extends Applet {
 			InputStream dataSource;
 			while((entry = in.getNextEntry()) != null) {
 				n = entry.getName();
-				if(n.contains(".svn") || n.equals("META-INF/MOJANG_C.SF") || n.equals("META-INF/MOJANG_C.DSA") || n.equals("net/minecraft/minecraft.key") || n.equals("net/minecraft/Util$OS.class")) continue;
+				if(n.contains(".svn") 
+						|| n.equals("META-INF/MOJANG_C.SF") 
+						|| n.equals("META-INF/MOJANG_C.DSA") 
+						|| n.equals("net/minecraft/minecraft.key") 
+						|| n.equals("net/minecraft/Util$OS.class")) continue;
+				
 				out.putNextEntry(entry);
 				if(n.equals("META-INF/MANIFEST.MF")) dataSource = new ByteArrayInputStream(MANIFEST_TEXT.getBytes());
 				else if(n.equals("net/minecraft/Util.class")) dataSource = Resources.load("net/minecraft/Util.class");
