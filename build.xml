@@ -57,4 +57,8 @@
 			</manifest>
 		</jar>
 	</target>
+	
+	<!-- There really isn't an automated way to test this -->
+	<target name="test">
+	</target>
 </project>
