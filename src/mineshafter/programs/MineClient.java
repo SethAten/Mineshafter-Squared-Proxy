@@ -21,6 +21,7 @@ import net.minecraft.Util;
 
 import com.mineshaftersquared.Logger;
 import com.mineshaftersquared.Settings;
+import com.mineshaftersquared.Version;
 
 import mineshafter.proxy.MineProxy;
 import mineshafter.util.Resources;
@@ -30,7 +31,7 @@ import mineshafter.util.Streams;
 @SuppressWarnings("restriction")
 public class MineClient extends Applet {
 	private static final long serialVersionUID = 1L;
-	protected static String VERSION = "3.8.1";
+	protected static final Version VERSION = new Version(3, 8, 1);
 	
 	protected static String launcherDownloadURL = "https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft.jar";
 	protected static String normalLauncherFilename = "minecraft.jar";
@@ -73,19 +74,21 @@ public class MineClient extends Applet {
 	}
 	
 	private static boolean MS2Update()
-	{		
-			// old "http://" + authServer + "/update.php?name=client&build=" + buildNumber
-			String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
-			
-			// Print Proxy Version Numbers to Console
-			System.out.println("Current proxy version: " + VERSION);
-			System.out.println("Gotten proxy version: " + updateInfo);
-			
-			// tell user to update if not at latest version
-			if(updateInfo.equals(VERSION))
-				return false;
-			else
-				return true;
+	{
+		String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
+		
+		// Print Proxy Version Numbers to Console
+		System.out.println("Current proxy version: " + VERSION);
+		System.out.println("Gotten proxy version: " + updateInfo);
+		
+		// create version object out of latest version
+		Version latestVersion = new Version(updateInfo);
+		
+		// tell user to update if not at latest version
+		if(VERSION.updateTo(latestVersion))
+			return true;
+		else
+			return false;
 	}
 
 	private static boolean startProxy()

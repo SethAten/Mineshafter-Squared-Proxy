@@ -8,10 +8,12 @@ import java.util.Hashtable;
 import java.util.regex.Pattern;
 import java.net.BindException;
 
+import com.mineshaftersquared.Version;
+
 
 public class MineProxy extends Thread {
 	public static String authServer;
-	public String version = "";
+	public Version version;
 	private int port = -1;
 	
 	// Patterns
@@ -29,20 +31,15 @@ public class MineProxy extends Thread {
 	public Hashtable<String, byte[]> skinCache;
 	public Hashtable<String, byte[]> cloakCache;
 	
-	public MineProxy(String version, String currentAuthServer) {
+	public MineProxy(Version version, String currentAuthServer) {
 		setName("MineProxy Thread");
 		
 		MineProxy.authServer = currentAuthServer; // TODO maybe change this leave it for now 
 		
-		try {
-			this.version = version;
-			
-			skinCache = new Hashtable<String, byte[]>();
-			cloakCache = new Hashtable<String, byte[]>();
-		} catch(Exception e) {
-			System.out.println("Proxy starting error:");
-			e.printStackTrace();
-		}
+		this.version = version;
+		
+		skinCache = new Hashtable<String, byte[]>();
+		cloakCache = new Hashtable<String, byte[]>();
 	}
 	
 	@SuppressWarnings("resource")

@@ -10,13 +10,14 @@ import java.util.jar.Attributes;
 
 import com.mineshaftersquared.Logger;
 import com.mineshaftersquared.Settings;
+import com.mineshaftersquared.Version;
 
 import mineshafter.proxy.MineProxy;
 import mineshafter.util.SimpleRequest;
 
 @SuppressWarnings("restriction")
 public class MineServer {
-	protected static String VERSION = "3.8.1";
+	protected static final Version VERSION = new Version(3, 8, 1);
 
 	protected static String authServer = new String();
 	protected static File mineshaftersquaredPath;
@@ -97,17 +98,19 @@ public class MineServer {
 	
 	private static boolean MS2Update()
 	{
-			// old "http://" + authServer + "/update.php?name=client&build=" + buildNumber
-			String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/server/new"));
-			
-			// Print Proxy Version Numbers to Console
-			Logger.logln("Current proxy version: " + VERSION);
-			Logger.logln("Gotten proxy version: " + updateInfo);
-			
-			// tell user to update if not at latest version
-			if(updateInfo.equals(VERSION))
-				return false;
-			else
-				return true;
+		String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
+		
+		// Print Proxy Version Numbers to Console
+		System.out.println("Current proxy version: " + VERSION);
+		System.out.println("Gotten proxy version: " + updateInfo);
+		
+		// create version object out of latest version
+		Version latestVersion = new Version(updateInfo);
+		
+		// tell user to update if not at latest version
+		if(VERSION.updateTo(latestVersion))
+			return true;
+		else
+			return false;
 	}
 }
