@@ -16,7 +16,7 @@ import mineshafter.util.SimpleRequest;
 
 @SuppressWarnings("restriction")
 public class MineServer {
-	protected static String VERSION = "3.8.0";
+	protected static String VERSION = "3.8.1";
 
 	protected static String authServer = new String();
 	protected static File mineshaftersquaredPath;

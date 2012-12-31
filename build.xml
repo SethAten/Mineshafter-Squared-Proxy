@@ -5,7 +5,7 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
-	<property name="launch4j.dir" location="/opt/l4j" />
+	<property name="launch4j.dir" location="C:\Program Files (x86)\Launch4j" />
 	<!-- Path Setup -->
     <path id="Mineshafter-Squared-Proxy.classpath">
         <pathelement location="bin"/>
