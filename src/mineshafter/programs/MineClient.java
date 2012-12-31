@@ -31,7 +31,7 @@ import mineshafter.util.Streams;
 @SuppressWarnings("restriction")
 public class MineClient extends Applet {
 	private static final long serialVersionUID = 1L;
-	protected static final Version VERSION = new Version(3, 8, 1);
+	protected static final Version VERSION = new Version(3, 8, 2);
 	
 	protected static String launcherDownloadURL = "https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft.jar";
 	protected static String normalLauncherFilename = "minecraft.jar";
@@ -90,7 +90,7 @@ public class MineClient extends Applet {
 		else
 			return false;
 	}
-
+	
 	private static boolean startProxy()
 	{
 		try {
