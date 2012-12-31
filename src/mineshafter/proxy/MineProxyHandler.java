@@ -129,8 +129,7 @@ public class MineProxyHandler extends Thread {
 		else if(getversionMatcher.matches()) {
 			System.out.println("GetVersion");
 			
-			//url = "http://" + MineProxy.authServer + "/game/getversion.php?proxy=" + this.proxy.version;
-			url = "http://" + MineProxy.authServer + "/game/getversion/" + proxy.version;
+			url = "http://" + MineProxy.authServer + "/game/get_version/";
 			System.out.println("To: " + url);
 			
 			try {
