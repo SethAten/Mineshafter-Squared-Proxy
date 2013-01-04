@@ -32,7 +32,7 @@ public class Resources {
 			reader.close();
 			return builder.toString();
 		} catch (Exception ex) {
-			Logger.logln("load resources: " + ex.getLocalizedMessage());
+			Logger.log("load resources: " + ex.getLocalizedMessage());
 		}
 		
 		return null;

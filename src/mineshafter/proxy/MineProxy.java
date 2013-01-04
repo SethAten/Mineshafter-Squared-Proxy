@@ -51,11 +51,11 @@ public class MineProxy extends Thread {
 								// let's try for some less crowded real-estate
 			while (port < 12000) { // That should be enough
 				try {
-					Logger.logln("Trying to proxy on port " + port);
+					Logger.log("Trying to proxy on port " + port);
 					byte[] loopback = {127, 0, 0, 1};
 					server = new ServerSocket(port, 16, InetAddress.getByAddress(loopback));
 					this.port = port;
-					Logger.logln("Proxying successful");
+					Logger.log("Proxying successful");
 					break;
 				} catch (BindException ex) {
 					port++;
@@ -70,7 +70,7 @@ public class MineProxy extends Thread {
 				handler.start();
 			}
 		} catch(IOException ex) {
-			Logger.logln("Error in server accept loop: " + ex.getLocalizedMessage());
+			Logger.log("Error in server accept loop: " + ex.getLocalizedMessage());
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class MineProxy extends Thread {
 			try {
 				sleep(50);
 			} catch (InterruptedException ex) {
-				Logger.logln("Interrupted while waiting for port: " + ex.getLocalizedMessage());
+				Logger.log("Interrupted while waiting for port: " + ex.getLocalizedMessage());
 			}
 		}
 		

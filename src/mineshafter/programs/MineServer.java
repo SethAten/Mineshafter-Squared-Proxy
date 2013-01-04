@@ -8,6 +8,8 @@ import java.util.jar.JarFile;
 import java.lang.reflect.Method;
 import java.util.jar.Attributes;
 
+import javax.swing.JOptionPane;
+
 import com.mineshaftersquared.Logger;
 import com.mineshaftersquared.Settings;
 import com.mineshaftersquared.Version;
@@ -33,7 +35,7 @@ public class MineServer {
 		// check for updates
 		if(MS2Update())
 		{
-			Logger.logln("An update for Mineshafter Squared is available, please go to " + authServer + " and redownload the proxy client.");
+			Logger.log("An update for Mineshafter Squared is available, please go to " + authServer + " and redownload the proxy client.");
 			System.exit(0);
 		}
 		
@@ -75,7 +77,7 @@ public class MineServer {
 				cls 	= cl.loadClass(name);
 				main 	= cls.getDeclaredMethod("main", new Class[] { String[].class });
 			} catch (Exception ex) {
-				Logger.logln("Error loading class " + name + " from jar " + load + ": " + ex.getLocalizedMessage());
+				Logger.log("Error loading class " + name + " from jar " + load + ": " + ex.getLocalizedMessage());
 				System.exit(1);
 			}
 			
@@ -89,7 +91,7 @@ public class MineServer {
 			
 			main.invoke(cls, new Object[] { nargs });
 		} catch (Exception e) {
-			Logger.logln("Something bad happened:");
+			Logger.log("Something bad happened:");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -97,11 +99,18 @@ public class MineServer {
 	
 	private static boolean MS2Update()
 	{
-		String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
+		String updateInfo = new String();
+		try {
+			updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
+		} catch(Exception ex) {
+			Logger.log("Problem connecting to auth server");
+			JOptionPane.showMessageDialog(null, "Could not connect to auth server. Please make sure you are online and pointing to a valid auth server.", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
 		
 		// Print Proxy Version Numbers to Console
-		Logger.logln("Current proxy version: " + VERSION);
-		Logger.logln("Gotten proxy version: " + updateInfo);
+		Logger.log("Current proxy version: " + VERSION);
+		Logger.log("Gotten proxy version: " + updateInfo);
 		
 		// create version object out of latest version
 		Version latestVersion = new Version(updateInfo);

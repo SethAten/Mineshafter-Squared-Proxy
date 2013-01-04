@@ -15,38 +15,56 @@ public class Settings
 	
 	public Settings(File rootFolder)
 	{
-		String file = rootFolder + "/" + "mineshaftersquared.properties";
+		String file = rootFolder + "\\" + "mineshaftersquared.properties";
 		
 		try {
-			Logger.logln(file);
+			Logger.log(file);
 			properties.load(new FileInputStream(file));
-			
-			if(new File(rootFolder + "minecraft.jar").exists())
-				purgeFiles(rootFolder.toString());
-			
+			Logger.log("Properties found, adding new settings if needed");
 		} catch (IOException e) {
-			Logger.logln("No properties file: creating with defaults");
+			Logger.log("No properties file: creating with defaults");
 			purgeFiles(file);
-			createWithDefaults(file);
 		}
+		
+		updateWithDefaults(file);
 	}
 	
-	private void createWithDefaults(String filePath)
+	private void updateWithDefaults(String filePath)
 	{
 		try {
-			properties.setProperty("auth", Resources.loadString("auth").trim());
-			properties.store(new FileOutputStream(filePath), null);
-		} catch (FileNotFoundException e1) {
-			Logger.logln("Error creating properties file" + e1);
-		} catch (IOException e1) {
-			Logger.logln("Error creating properties file" + e1);
+			// defaults
+			boolean updated = false;
+			
+			// AUTH
+			if(!properties.containsKey("auth"))
+			{
+				properties.setProperty("auth", Resources.loadString("auth").trim());
+				updated = true;
+			}
+			
+			// LOG-FILE
+			if(!properties.containsKey("log-file"))
+			{
+				properties.setProperty("log-file", "none");
+				updated = true;
+			}
+			
+			// write out
+			if(updated)
+			{
+				properties.store(new FileOutputStream(filePath), null);
+			}
+		} catch (FileNotFoundException ex) {
+			Logger.log("Error creating properties file" + ex);
+		} catch (IOException ex) {
+			Logger.log("Error writing properties file" + ex);
 		}
 	}
 	
 	private void purgeFiles(String file)
 	{
-		File ms2 = new File(file + "minecraft.jar");
-		File ms2_modified = new File(file + "minecraft_modified.jar");
+		File ms2 = new File(file + "/minecraft.jar");
+		File ms2_modified = new File(file + "/minecraft_modified.jar");
 		
 		ms2.delete();
 		ms2_modified.delete();

@@ -59,7 +59,9 @@ public class MineClient extends Applet {
 			mineshaftersquaredPath.mkdir();
 		
 		settings = new Settings(mineshaftersquaredPath);
+		
 		authServer = settings.get("auth");
+		Logger.setFile(mineshaftersquaredPath + "/" + settings.get("log-file"));
 		
 		// check for MS2 updates
 		if(MS2Update())
@@ -75,11 +77,18 @@ public class MineClient extends Applet {
 	
 	private static boolean MS2Update()
 	{
-		String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
+		String updateInfo = new String();
+		try {
+			updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
+		} catch(Exception ex) {
+			Logger.log("Problem connecting to auth server");
+			JOptionPane.showMessageDialog(null, "Could not connect to auth server. Please make sure you are online and pointing to a valid auth server.", "Critical Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+		}
 		
 		// Print Proxy Version Numbers to Console
-		Logger.logln("Current proxy version: " + VERSION);
-		Logger.logln("Gotten proxy version: " + updateInfo);
+		Logger.log("Current proxy version: " + VERSION);
+		Logger.log("Gotten proxy version: " + updateInfo);
 		
 		// create version object out of latest version
 		Version latestVersion = new Version(updateInfo);
@@ -114,7 +123,7 @@ public class MineClient extends Applet {
 			// everything's peachy
 			return true;
 		} catch(Exception e) {
-			Logger.logln("Something bad happened:" + e);
+			Logger.log("Something bad happened:" + e);
 			System.exit(1);
 			// oops
 			return false;
@@ -159,12 +168,12 @@ public class MineClient extends Applet {
 					startLauncher(args);
 					
 				} catch(Exception ex) {
-					Logger.logln("Error downloading launcher: " + ex.getLocalizedMessage());
+					Logger.log("Error downloading launcher: " + ex.getLocalizedMessage());
 					return;
 				}
 			}
 		} catch(Exception ex) {
-			Logger.logln("Error starting launcher: " + ex.getLocalizedMessage());
+			Logger.log("Error starting launcher: " + ex.getLocalizedMessage());
 			return;
 		}
 	}
@@ -194,7 +203,7 @@ public class MineClient extends Applet {
 			in.close();
 			out.close();
 		} catch(Exception ex) {
-			Logger.logln("Editing launcher failed: " + ex.getLocalizedMessage());
+			Logger.log("Editing launcher failed: " + ex.getLocalizedMessage());
 		}
 	}
 }
