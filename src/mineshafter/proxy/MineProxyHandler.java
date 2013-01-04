@@ -152,8 +152,7 @@ public class MineProxyHandler extends Thread {
 			System.out.println("JoinServer");
 			
 			params = joinserverMatcher.group(1);
-			//url = "http://" + MineProxy.authServer + "/game/joinserver.php" + params;
-			url = "http://" + MineProxy.authServer + "/game/joinserver" + params;
+			url = "http://" + MineProxy.authServer + "/game/join_server" + params;
 			System.out.println("To: " + url);
 			data = getRequest(url);
 			contentType = "text/plain";
@@ -164,8 +163,7 @@ public class MineProxyHandler extends Thread {
 			System.out.println("CheckServer");
 			
 			params = checkserverMatcher.group(1);
-			//url = "http://" + MineProxy.authServer + "/game/checkserver.php" + params;
-			url = "http://" + MineProxy.authServer + "/game/checkserver" + params;
+			url = "http://" + MineProxy.authServer + "/game/check_server" + params;
 			System.out.println("To: " + url);
 			data = getRequest(url);
 			
