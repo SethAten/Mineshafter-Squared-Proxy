@@ -8,6 +8,7 @@ import java.util.Hashtable;
 import java.util.regex.Pattern;
 import java.net.BindException;
 
+import com.mineshaftersquared.Logger;
 import com.mineshaftersquared.Version;
 
 
@@ -50,11 +51,11 @@ public class MineProxy extends Thread {
 								// let's try for some less crowded real-estate
 			while (port < 12000) { // That should be enough
 				try {
-					System.out.println("Trying to proxy on port " + port);
+					Logger.logln("Trying to proxy on port " + port);
 					byte[] loopback = {127, 0, 0, 1};
 					server = new ServerSocket(port, 16, InetAddress.getByAddress(loopback));
 					this.port = port;
-					System.out.println("Proxying successful");
+					Logger.logln("Proxying successful");
 					break;
 				} catch (BindException ex) {
 					port++;
@@ -68,9 +69,8 @@ public class MineProxy extends Thread {
 				MineProxyHandler handler = new MineProxyHandler(this, connection);
 				handler.start();
 			}
-		} catch(IOException e) {
-			System.out.println("Error in server accept loop:");
-			e.printStackTrace();
+		} catch(IOException ex) {
+			Logger.logln("Error in server accept loop: " + ex.getLocalizedMessage());
 		}
 	}
 	
@@ -79,11 +79,11 @@ public class MineProxy extends Thread {
 		while (port < 0) {
 			try {
 				sleep(50);
-			} catch (InterruptedException e) {
-				System.out.println("Interrupted while waiting for port");
-				e.printStackTrace();
+			} catch (InterruptedException ex) {
+				Logger.logln("Interrupted while waiting for port: " + ex.getLocalizedMessage());
 			}
 		}
+		
 		return port;
 	}
 }

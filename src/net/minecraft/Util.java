@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
+
 public class Util {
 	private static File workDir = null;
 	public static boolean portable = false;
@@ -108,7 +109,7 @@ public class Util {
 		// TODO Maybe change this to only switch to the old login URL
 		if (targetURL.startsWith("https://login.minecraft.net"))
 			targetURL = "http://session.minecraft.net/game/getversion.jsp";
-		System.out.println("executePost: " + targetURL);
+		System.out.println("[Mineshafter Squared] executePost: " + targetURL);
 		try {
 			byte[] params = urlParameters.getBytes();
 			URL u = new URL(targetURL);
@@ -157,16 +158,14 @@ public class Util {
 					es.read(eb);
 					errstr = new String(eb);
 				}
-				System.out.println("executePost failed: server sent 404\n"
-						+ errstr);
+				
+				System.out.println("[Mineshafter Squared] executePost failed: server sent 404\n" + errstr);
 			} catch (IOException ex) {
-				System.out.println("Error getting 404 error info");
-				ex.printStackTrace();
+				System.out.println("[Mineshafter Squared] Error getting 404 error info: " + ex.getLocalizedMessage());
 			}
 			return null;
-		} catch (Exception e) {
-			System.out.println("executePost failed:");
-			e.printStackTrace();
+		} catch (Exception ex) {
+			System.out.println("[Mineshafter Squared] executePost failed: " + ex.getLocalizedMessage());
 			return null;
 		}
 	}

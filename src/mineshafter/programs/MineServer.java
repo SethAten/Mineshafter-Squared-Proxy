@@ -74,9 +74,8 @@ public class MineServer {
 				cl 		= new URLClassLoader(new URL[] { new File(load).toURI().toURL() }, Main.class.getClassLoader());
 				cls 	= cl.loadClass(name);
 				main 	= cls.getDeclaredMethod("main", new Class[] { String[].class });
-			} catch (Exception e) {
-				System.out.println("Error loading class " + name + " from jar " + load + ":");
-				e.printStackTrace();
+			} catch (Exception ex) {
+				Logger.logln("Error loading class " + name + " from jar " + load + ": " + ex.getLocalizedMessage());
 				System.exit(1);
 			}
 			
@@ -101,8 +100,8 @@ public class MineServer {
 		String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
 		
 		// Print Proxy Version Numbers to Console
-		System.out.println("Current proxy version: " + VERSION);
-		System.out.println("Gotten proxy version: " + updateInfo);
+		Logger.logln("Current proxy version: " + VERSION);
+		Logger.logln("Gotten proxy version: " + updateInfo);
 		
 		// create version object out of latest version
 		Version latestVersion = new Version(updateInfo);

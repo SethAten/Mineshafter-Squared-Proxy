@@ -78,8 +78,8 @@ public class MineClient extends Applet {
 		String updateInfo = new String(SimpleRequest.get("http://" + authServer + "/update/client/"));
 		
 		// Print Proxy Version Numbers to Console
-		System.out.println("Current proxy version: " + VERSION);
-		System.out.println("Gotten proxy version: " + updateInfo);
+		Logger.logln("Current proxy version: " + VERSION);
+		Logger.logln("Gotten proxy version: " + updateInfo);
 		
 		// create version object out of latest version
 		Version latestVersion = new Version(updateInfo);
@@ -159,14 +159,13 @@ public class MineClient extends Applet {
 					startLauncher(args);
 					
 				} catch(Exception ex) {
-					System.out.println("Error downloading launcher:");
-					ex.printStackTrace();
+					Logger.logln("Error downloading launcher: " + ex.getLocalizedMessage());
 					return;
 				}
 			}
-		} catch(Exception e1) {
-			System.out.println("Error starting launcher:");
-			e1.printStackTrace();
+		} catch(Exception ex) {
+			Logger.logln("Error starting launcher: " + ex.getLocalizedMessage());
+			return;
 		}
 	}
 	
@@ -194,9 +193,8 @@ public class MineClient extends Applet {
 			}
 			in.close();
 			out.close();
-		} catch(Exception e) {
-			System.out.println("Editing launcher failed:");
-			e.printStackTrace();
+		} catch(Exception ex) {
+			Logger.logln("Editing launcher failed: " + ex.getLocalizedMessage());
 		}
 	}
 }

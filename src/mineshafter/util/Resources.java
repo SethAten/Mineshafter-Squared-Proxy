@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.mineshaftersquared.Logger;
+
 public class Resources {
 	public static InputStream load(String filename)
 			throws FileNotFoundException {
@@ -29,9 +31,8 @@ public class Resources {
 			
 			reader.close();
 			return builder.toString();
-		} catch (Exception e) {
-			System.out.println("load resources:");
-			e.printStackTrace();
+		} catch (Exception ex) {
+			Logger.logln("load resources: " + ex.getLocalizedMessage());
 		}
 		
 		return null;

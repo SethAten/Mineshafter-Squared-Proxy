@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+
+import com.mineshaftersquared.Logger;
+
 import mineshafter.util.Streams;
 
 public class MineProxyHandler extends Thread {
@@ -47,11 +50,9 @@ public class MineProxyHandler extends Thread {
 	    String method = requestLine[0].trim().toUpperCase();
 	    String url = requestLine[1].trim();
 	    
-	 	System.out.println("Request: " + method + " " + url);
+	    Logger.logln("Request: " + method + " " + url);
 	 	
 		// Read the incoming headers
-		// System.out.println("Headers:");
-	 	
 	 	String header;
 		do {
 			header = readUntil(fromClient, '\n').trim();
@@ -82,11 +83,11 @@ public class MineProxyHandler extends Thread {
 		
 		// If Skin Request
 		if(skinMatcher.matches()) {
-			System.out.println("Skin");
+			Logger.logln("Skin");
 			
 			String username = skinMatcher.group(1);
 			if(proxy.skinCache.containsKey(username)) { // Is the skin in the cache?
-				System.out.println("Skin from cache");
+				Logger.logln("Skin from cache");
 				
 				data = proxy.skinCache.get(username);  // Then get it from there
 			} else {
@@ -94,10 +95,10 @@ public class MineProxyHandler extends Thread {
 				//url = "http://" + MineProxy.authServer + "/game/getskin.php?name=" + username;
 				url = "http://" + MineProxy.authServer + "/game/getskin/" + username;
 				
-				System.out.println("To: " + url);
+				Logger.logln("To: " + url);
 				
 				data = getRequest(url); // Then get it...
-				System.out.println("Response length: " + data.length);
+				Logger.logln("Response length: " + data.length);
 				
 				proxy.skinCache.put(username, data); // And put it in there
 			}
@@ -105,21 +106,21 @@ public class MineProxyHandler extends Thread {
 		} 
 		// If Cloak Request
 		else if(cloakMatcher.matches()) {
-			System.out.println("Cloak");
+			Logger.logln("Cloak");
 			
 			String username = cloakMatcher.group(1);
 			if(proxy.cloakCache.containsKey(username)) {
-				System.out.println("Cloak from cache");
+				Logger.logln("Cloak from cache");
 				data = proxy.cloakCache.get(username);
 			} else {
 				//url = "http://" + MineProxy.authServer + "/cloak/get.jsp?user=" + username;
 				//url = "http://" + MineProxy.authServer + "/game/getcloak.php?user=" + username;
 				url = "http://" + MineProxy.authServer + "/game/getcloak/" + username;
 				
-				System.out.println("To: " + url);
+				Logger.logln("To: " + url);
 				
 				data = getRequest(url);
-				System.out.println("Response length: " + data.length);
+				Logger.logln("Response length: " + data.length);
 				
 				proxy.cloakCache.put(username, data);
 			}
@@ -127,10 +128,10 @@ public class MineProxyHandler extends Thread {
 		} 
 		// If Version Request
 		else if(getversionMatcher.matches()) {
-			System.out.println("GetVersion");
+			Logger.logln("GetVersion");
 			
 			url = "http://" + MineProxy.authServer + "/game/get_version/";
-			System.out.println("To: " + url);
+			Logger.logln("To: " + url);
 			
 			try {
 				int postlen = Integer.parseInt(headers.get("content-length"));
@@ -140,47 +141,44 @@ public class MineProxyHandler extends Thread {
 				
 				data = postRequest(url, new String(postdata), "application/x-www-form-urlencoded");
 				
-			} catch(IOException e) {
-				System.out.println("Unable to read POST data from getversion request");
-				
-				e.printStackTrace();
+			} catch(IOException ex) {
+				Logger.logln("Unable to read POST data from getversion request: " + ex.getLocalizedMessage());
 			}
-			
 		} 
 		// If JoinServer Request
 		else if(joinserverMatcher.matches()) {
-			System.out.println("JoinServer");
+			Logger.logln("JoinServer");
 			
 			params = joinserverMatcher.group(1);
 			url = "http://" + MineProxy.authServer + "/game/join_server" + params;
-			System.out.println("To: " + url);
+			Logger.logln("To: " + url);
 			data = getRequest(url);
 			contentType = "text/plain";
 			// TODO There may be a bug here, keeps causing a hang in the MC thread that tries to read the data from it
 		}
 		// If Check Server Request
 		else if(checkserverMatcher.matches()) {
-			System.out.println("CheckServer");
+			Logger.logln("CheckServer");
 			
 			params = checkserverMatcher.group(1);
 			url = "http://" + MineProxy.authServer + "/game/check_server" + params;
-			System.out.println("To: " + url);
+			Logger.logln("To: " + url);
 			data = getRequest(url);
 			
 		} else if(audiofix_url.matches()) {  // this is to fix the audio problems
-			System.out.println("Audio Fix");
+			Logger.logln("Audio Fix");
 			url = "http://s3.amazonaws.com/MinecraftResources/";
-			System.out.println("To: " + url);
+			Logger.logln("To: " + url);
 			data = getRequest(url);
 		} else if(dl_bukkit.matches()) {
-			System.out.println("Bukkit Fix");
+			Logger.logln("Bukkit Fix");
 			data = getRequest(url);
 		} else if(client_snoop.matches()) // tmp for now since else does not seem to handle these dont have time to look into it
 		{
 			params = client_snoop.group(1);
 			url = "http://snoop\\.minecraft\\.net/client"+params;
 			
-			System.out.println("To: " + url);
+			Logger.logln("To: " + url);
 			
 			try {
 				int postlen = Integer.parseInt(headers.get("content-length"));
@@ -190,19 +188,19 @@ public class MineProxyHandler extends Thread {
 				
 				data = postRequest(url, new String(postdata), "application/x-www-form-urlencoded");
 				
-			} catch(IOException e) {
-				System.out.println("Unable to read POST data from getversion request");
-				
-				e.printStackTrace();
+			} catch(IOException ex) {
+				Logger.logln("Unable to read POST data from getversion request: " + ex.getLocalizedMessage());
 			}
-		} else if(server_snoop.matches())
+		} 
+		else if(server_snoop.matches())
 		{
 			params = server_snoop.group(1);
 			url = "http://snoop\\.minecraft\\.net/server"+params;
 			
-			System.out.println("To: " + url);
+			Logger.logln("To: " + url);
 			
-			try {
+			try 
+			{
 				int postlen = Integer.parseInt(headers.get("content-length"));
 				char[] postdata = new char[postlen];
 				InputStreamReader reader = new InputStreamReader(fromClient);
@@ -210,15 +208,15 @@ public class MineProxyHandler extends Thread {
 				
 				data = postRequest(url, new String(postdata), "application/x-www-form-urlencoded");
 				
-			} catch(IOException e) {
-				System.out.println("Unable to read POST data from getversion request");
-				
-				e.printStackTrace();
+			} 
+			catch(IOException ex) 
+			{
+				Logger.logln("Unable to read POST data from getversion request: " + ex.getLocalizedMessage());
 			}
 		}
 		// If Any other network request
 		else {
-			System.out.println("No handler. Piping.");
+			Logger.logln("No handler. Piping.");
 			
 			try {
 				if(!url.startsWith("http://") && !url.startsWith("https://")) {
@@ -283,8 +281,6 @@ public class MineProxyHandler extends Thread {
 					}
 					res += "\r\n";
 					
-					//System.out.println(res);
-					
 					int size = 0;
 					if (responseCode / 100 != 5) {
 						toClient.writeBytes(res);
@@ -294,7 +290,7 @@ public class MineProxyHandler extends Thread {
 					toClient.close();
 					connection.close();
 					
-					System.out.println("Piping finished, data size: " + size);
+					Logger.logln("Piping finished, data size: " + size);
 					
 				} else if (method.equals("HEAD")) {
 					HttpURLConnection c = (HttpURLConnection) u.openConnection(Proxy.NO_PROXY);
@@ -317,13 +313,11 @@ public class MineProxyHandler extends Thread {
 					}
 					res += "\r\n";
 					
-					//System.out.println(res);
-					
 					toClient.writeBytes(res); // TODO Occasional exception socket write error
 					toClient.close();
 					connection.close();
 				} else {
-					System.out.println("UNEXPECTED REQUEST TYPE: " + method);
+					Logger.logln("UNEXPECTED REQUEST TYPE: " + method);
 				}
 				
 			} catch (Exception e) {
@@ -345,15 +339,16 @@ public class MineProxyHandler extends Thread {
 				toClient.write(data);
 				toClient.flush();
 			}
+			
 			this.toClient.close();
 			this.connection.close();
 			fromClient.close();
 			toClient.close();
 			connection.close();
-			//System.out.println(data.length);
-			//System.out.println(new String(data));
-		} catch (IOException e) {
-			e.printStackTrace();
+		} 
+		catch (IOException ex) 
+		{
+			Logger.logln("Error: " + ex.getLocalizedMessage());
 		}
 	}
 	
@@ -365,13 +360,13 @@ public class MineProxyHandler extends Thread {
 			int code = conn.getResponseCode();
 			
 			if(code == 301 || code == 302 || code == 303) {
-				System.out.println("Java didn't redirect automatically, going manual: " + Integer.toString(code));
+				Logger.logln("Java didn't redirect automatically, going manual: " + Integer.toString(code));
 				String l = conn.getHeaderField("location").trim();
-				System.out.println("Manual redirection to: " + l);
+				Logger.logln("Manual redirection to: " + l);
 				return getRequest(l);
 			}
 			
-			System.out.println("Response: " + code);
+			Logger.logln("Response: " + code);
 			
 			if(code == 403) {
 				String s = "403 from req to " + url + "\nRequest headers:\n";
@@ -395,8 +390,8 @@ public class MineProxyHandler extends Thread {
 					}
 				}
 				
-				System.out.println(s);
-				System.out.println("Contents:\n" + new String(grabData(conn.getErrorStream())));
+				Logger.logln(s);
+				Logger.logln("Contents:\n" + new String(grabData(conn.getErrorStream())));
 			}
 			
 			if(code / 100 == 4) {
@@ -407,12 +402,10 @@ public class MineProxyHandler extends Thread {
 			
 			return grabData(in);
 			
-		} catch (MalformedURLException e) {
-			System.out.println("Bad URL in getRequest:");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("IO error during a getRequest:");
-			e.printStackTrace();
+		} catch (MalformedURLException ex) {
+			Logger.logln("Bad URL in getRequest: " + ex.getLocalizedMessage());
+		} catch (IOException ex) {
+			Logger.logln("IO error during a getRequest: " + ex.getLocalizedMessage());
 		}
 		
 		return new byte[0];
@@ -421,7 +414,6 @@ public class MineProxyHandler extends Thread {
 	public static byte[] postRequest(String url, String postdata, String contentType) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(out);
-		//System.out.println("Postdata: " + postdata);
 		
 		try {
 			writer.write(postdata);
@@ -443,8 +435,6 @@ public class MineProxyHandler extends Thread {
 			c.setDoOutput(true);
 			c.setRequestMethod("POST");
 			
-			//System.out.println("Postdata_bytes: " + new String(postdata));
-			
 			c.setRequestProperty("Host", u.getHost());
 			c.setRequestProperty("Content-Length", Integer.toString(postdata.length));
 			c.setRequestProperty("Content-Type", contentType);
@@ -457,13 +447,12 @@ public class MineProxyHandler extends Thread {
 			byte[] data = grabData(new BufferedInputStream(c.getInputStream()));
 			return data;
 			
-		} catch(java.net.UnknownHostException e) {
-			System.out.println("Unable to resolve remote host, returning null");
-		} catch (MalformedURLException e) {
-			System.out.println("Bad URL when doing postRequest:");
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch(java.net.UnknownHostException ex) {
+			Logger.logln("Unable to resolve remote host, returning null: " + ex.getLocalizedMessage());
+		} catch (MalformedURLException ex) {
+			Logger.logln("Bad URL when doing postRequest: " + ex.getLocalizedMessage());
+		} catch (IOException ex) {
+			Logger.logln("Error: " + ex.getLocalizedMessage());
 		}
 		
 		return null;
@@ -525,15 +514,15 @@ public class MineProxyHandler extends Thread {
 					break;
 			}
 		} catch (IOException ex) {
-			System.out.println("readUntil unable to read from InputStream, endSeq: " + new String(endSequence));
-			ex.printStackTrace();
+			Logger.logln("readUntil unable to read from InputStream, endSeq: " + new String(endSequence));
+			Logger.logln("Error: " + ex.getLocalizedMessage());
 		}
 
 		try {
 			r = out.toString("UTF-8");
 		} catch (java.io.UnsupportedEncodingException ex) {
-			System.out.println("readUntil unable to encode data: " + out.toString());
-			ex.printStackTrace();
+			Logger.logln("readUntil unable to encode data: " + out.toString());
+			Logger.logln("Error: " + ex.getLocalizedMessage());
 		}
 		
 		return r;
