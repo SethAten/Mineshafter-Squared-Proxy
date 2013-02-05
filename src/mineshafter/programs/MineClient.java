@@ -1,37 +1,37 @@
 package mineshafter.programs;
 
 import java.applet.Applet;
-import sun.applet.*;
 import java.awt.Frame;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 import javax.swing.JOptionPane;
-
-import net.minecraft.Util;
-
-import com.mineshaftersquared.Logger;
-import com.mineshaftersquared.Settings;
-import com.mineshaftersquared.Version;
 
 import mineshafter.proxy.MineProxy;
 import mineshafter.util.Resources;
 import mineshafter.util.SimpleRequest;
 import mineshafter.util.Streams;
+import net.minecraft.Util;
+import sun.applet.Main;
+
+import com.mineshaftersquared.Logger;
+import com.mineshaftersquared.Settings;
+import com.mineshaftersquared.Version;
 
 @SuppressWarnings("restriction")
 public class MineClient extends Applet {
 	private static final long serialVersionUID = 1L;
-	protected static final Version VERSION = new Version(3, 8, 2);
+	protected static final Version VERSION = new Version(3, 9, 0);
 	
 	protected static String launcherDownloadURL = "https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft.jar";
 	protected static String normalLauncherFilename = "minecraft.jar";

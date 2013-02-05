@@ -7,15 +7,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import mineshafter.util.Resources;
-
 public class Settings 
 {
 	private Properties properties  = new Properties();
 	
 	public Settings(File rootFolder)
 	{
-		String file = rootFolder + "\\" + "mineshaftersquared.properties";
+		String file = rootFolder + "/" + "mineshaftersquared.properties";
 		
 		try {
 			Logger.log(file);
@@ -38,14 +36,15 @@ public class Settings
 			// AUTH
 			if(!properties.containsKey("auth"))
 			{
-				properties.setProperty("auth", Resources.loadString("auth").trim());
+				//TODO Change back to mineshaftersquared.com for normal release
+				properties.setProperty("auth", "alpha.mineshaftersquared.com");
 				updated = true;
 			}
 			
 			// LOG-FILE
 			if(!properties.containsKey("log-file"))
 			{
-				properties.setProperty("log-file", "none");
+				properties.setProperty("log-file", "client-log.log");
 				updated = true;
 			}
 			

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.mineshaftersquared.Logger;
 
@@ -31,6 +32,7 @@ public class MineProxyHandler extends Thread {
 	private MineProxy proxy;
 	
 	private static String[] BLACKLISTED_HEADERS = new String[]{"Connection", "Proxy-Connection", "Transfer-Encoding"};
+	public static Pattern HELP_TICKET_LOGIN_REGEX = Pattern.compile("\\b[0-9]{13}\\b:\\b\\w+\\b:\\S+:\\b[0-9|a-z]+\\b:\\b[0-9|a-z]+\\b");
 	
 	public MineProxyHandler(MineProxy proxy, Socket conn) throws IOException {
 		setName("MineProxyHandler Thread");
@@ -91,9 +93,7 @@ public class MineProxyHandler extends Thread {
 				
 				data = proxy.skinCache.get(username);  // Then get it from there
 			} else {
-				//url = "http://" + MineProxy.authServer + "/skin/" + username + ".png"; <-- Keep this code for API implementation
-				//url = "http://" + MineProxy.authServer + "/game/getskin.php?name=" + username;
-				url = "http://" + MineProxy.authServer + "/game/getskin/" + username;
+				url = "http://" + MineProxy.authServer + "/game/get_skin/" + username;
 				
 				Logger.log("To: " + url);
 				
@@ -113,9 +113,7 @@ public class MineProxyHandler extends Thread {
 				Logger.log("Cloak from cache");
 				data = proxy.cloakCache.get(username);
 			} else {
-				//url = "http://" + MineProxy.authServer + "/cloak/get.jsp?user=" + username;
-				//url = "http://" + MineProxy.authServer + "/game/getcloak.php?user=" + username;
-				url = "http://" + MineProxy.authServer + "/game/getcloak/" + username;
+				url = "http://" + MineProxy.authServer + "/game/get_cloak/" + username;
 				
 				Logger.log("To: " + url);
 				
@@ -138,9 +136,21 @@ public class MineProxyHandler extends Thread {
 				char[] postdata = new char[postlen];
 				InputStreamReader reader = new InputStreamReader(fromClient);
 				reader.read(postdata);
+
+				String postString = new String();
+				for(char c : postdata) {
+					postString += c;
+				}
 				
+				Logger.log(postString);
+
 				data = postRequest(url, new String(postdata), "application/x-www-form-urlencoded");
 				
+				String response = new String(data);
+				
+				if(HELP_TICKET_LOGIN_REGEX.matcher(response).matches()) {
+					// TODO: Flip Help Toggle
+				}
 			} catch(IOException ex) {
 				Logger.log("Unable to read POST data from getversion request: " + ex.getLocalizedMessage());
 			}
