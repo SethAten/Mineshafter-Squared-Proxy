@@ -71,6 +71,7 @@ public class MineProxyHandler extends Thread {
 		Matcher skinMatcher = MineProxy.SKIN_URL.matcher(url);
 		Matcher cloakMatcher = MineProxy.CLOAK_URL.matcher(url);
 		Matcher getversionMatcher = MineProxy.GETVERSION_URL.matcher(url);
+		Matcher altLoginMatcher = MineProxy.ALTLOGIN_URL.matcher(url);
 		Matcher joinserverMatcher = MineProxy.JOINSERVER_URL.matcher(url);
 		Matcher checkserverMatcher = MineProxy.CHECKSERVER_URL.matcher(url);
 		Matcher audiofix_url = MineProxy.AUDIOFIX_URL.matcher(url);
@@ -125,7 +126,7 @@ public class MineProxyHandler extends Thread {
 			
 		} 
 		// If Version Request
-		else if(getversionMatcher.matches()) {
+		else if(getversionMatcher.matches() || altLoginMatcher.matches()) {
 			Logger.log("GetVersion");
 			
 			url = "http://" + MineProxy.authServer + "/game/get_version/";

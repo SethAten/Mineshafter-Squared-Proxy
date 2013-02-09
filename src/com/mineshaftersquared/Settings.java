@@ -36,8 +36,7 @@ public class Settings
 			// AUTH
 			if(!properties.containsKey("auth"))
 			{
-				//TODO Change back to mineshaftersquared.com for normal release
-				properties.setProperty("auth", "alpha.mineshaftersquared.com");
+				properties.setProperty("auth", "mineshaftersquared.com");
 				updated = true;
 			}
 			

@@ -31,7 +31,7 @@ import com.mineshaftersquared.Version;
 @SuppressWarnings("restriction")
 public class MineClient extends Applet {
 	private static final long serialVersionUID = 1L;
-	protected static final Version VERSION = new Version(3, 9, 0);
+	protected static final Version VERSION = new Version(4, 0, 0);
 	
 	protected static String launcherDownloadURL = "https://s3.amazonaws.com/MinecraftDownload/launcher/minecraft.jar";
 	protected static String normalLauncherFilename = "minecraft.jar";
