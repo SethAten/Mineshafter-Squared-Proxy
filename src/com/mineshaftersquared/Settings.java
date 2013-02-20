@@ -13,7 +13,7 @@ public class Settings
 	
 	public Settings(File rootFolder)
 	{
-		String file = rootFolder + "/" + "mineshaftersquared.properties";
+		String file = rootFolder + "/" + "sa90squared.properties";
 		
 		try {
 			Logger.log(file);
@@ -36,7 +36,7 @@ public class Settings
 			// AUTH
 			if(!properties.containsKey("auth"))
 			{
-				properties.setProperty("auth", "mineshaftersquared.com");
+				properties.setProperty("auth", "mc.sa90.cu.cc");
 				updated = true;
 			}
 			

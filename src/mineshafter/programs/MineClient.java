@@ -53,7 +53,7 @@ public class MineClient extends Applet {
 	{
 		// Get Update Info
 		File gamePath = Util.getWorkingDirectory(); // test
-		mineshaftersquaredPath = new File(gamePath.toString().replace("minecraft", "mineshaftersquared"));
+		mineshaftersquaredPath = new File(gamePath.toString().replace("minecraft", "sa90shaftersquared"));
 		
 		if(!mineshaftersquaredPath.exists())
 			mineshaftersquaredPath.mkdir();
